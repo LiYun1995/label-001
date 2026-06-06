@@ -44,8 +44,12 @@ export async function POST(request: Request) {
     return NextResponse.json({ user }, { status: 201 });
   } catch (error) {
     console.error("注册错误:", error);
+    const errorMessage =
+      process.env.NODE_ENV === "development" && error instanceof Error
+        ? `注册失败: ${error.message}`
+        : "注册失败，请稍后重试";
     return NextResponse.json(
-      { error: "注册失败，请稍后重试" },
+      { error: errorMessage },
       { status: 500 }
     );
   }

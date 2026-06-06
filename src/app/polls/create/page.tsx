@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import {
@@ -24,13 +24,7 @@ export default function CreatePollPage() {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    if (status === "unauthenticated") {
-      router.push("/login?callbackUrl=/polls/create");
-    }
-  }, [status, router]);
-
-  if (status === "loading" || !session) {
+  if (status === "loading") {
     return (
       <div className="flex items-center justify-center py-20">
         <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
