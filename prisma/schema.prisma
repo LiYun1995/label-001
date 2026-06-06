@@ -1,0 +1,73 @@
+// Prisma schema for online voting system
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String    @id @default(cuid())
+  email     String    @unique
+  password  String
+  name      String?
+  createdAt DateTime  @default(now())
+  polls     Poll[]
+  votes     Vote[]
+}
+
+model Poll {
+  id          String        @id @default(cuid())
+  title       String
+  description String?
+  type        String // "single" | "multiple"
+  deadline    DateTime
+  isActive    Boolean       @default(true)
+  createdAt   DateTime      @default(now())
+  creatorId   String
+  creator     User          @relation(fields: [creatorId], references: [id])
+  options     PollOption[]
+  votes       Vote[]
+
+  @@index([creatorId])
+  @@index([deadline])
+}
+
+model PollOption {
+  id     String @id @default(cuid())
+  text   String
+  votes  Int    @default(0)
+  pollId String
+  poll   Poll   @relation(fields: [pollId], references: [id], onDelete: Cascade)
+  optionVotes OptionVote[]
+
+  @@index([pollId])
+}
+
+model Vote {
+  id          String       @id @default(cuid())
+  pollId      String
+  userId      String
+  createdAt   DateTime     @default(now())
+  poll        Poll         @relation(fields: [pollId], references: [id], onDelete: Cascade)
+  user        User         @relation(fields: [userId], references: [id])
+  optionVotes OptionVote[]
+
+  @@unique([pollId, userId])
+  @@index([pollId])
+  @@index([userId])
+}
+
+model OptionVote {
+  id       String     @id @default(cuid())
+  voteId   String
+  optionId String
+  vote     Vote       @relation(fields: [voteId], references: [id], onDelete: Cascade)
+  option   PollOption @relation(fields: [optionId], references: [id], onDelete: Cascade)
+
+  @@index([voteId])
+  @@index([optionId])
+}
