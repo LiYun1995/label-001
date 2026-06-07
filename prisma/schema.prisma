@@ -17,6 +17,7 @@ model User {
   createdAt DateTime  @default(now())
   polls     Poll[]
   votes     Vote[]
+  comments  Comment[]
 }
 
 model Poll {
@@ -31,6 +32,7 @@ model Poll {
   creator     User          @relation(fields: [creatorId], references: [id])
   options     PollOption[]
   votes       Vote[]
+  comments    Comment[]
 
   @@index([creatorId])
   @@index([deadline])
@@ -70,4 +72,17 @@ model OptionVote {
 
   @@index([voteId])
   @@index([optionId])
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  content   String
+  createdAt DateTime @default(now())
+  pollId    String
+  userId    String
+  poll      Poll     @relation(fields: [pollId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@index([pollId])
+  @@index([userId])
 }

@@ -15,6 +15,7 @@ import {
   Timer,
 } from "lucide-react";
 import VoteChart from "@/components/VoteChart";
+import CommentSection from "@/components/CommentSection";
 import type { Poll } from "@/types";
 
 interface PollDetailPageProps {
@@ -364,13 +365,15 @@ export default function PollDetailPage({ params }: PollDetailPageProps) {
       </div>
 
       {showResults && poll.totalVotes > 0 && (
-        <div className="card">
+        <div className="card mb-6">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">
             结果统计
           </h2>
           <VoteChart options={poll.options} totalVotes={poll.totalVotes} />
         </div>
       )}
+
+      <CommentSection pollId={id} />
     </div>
   );
 }
